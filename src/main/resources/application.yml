@@ -4,6 +4,24 @@ server:
 spring:
   application:
     name: meeting-booking
+  datasource:
+    url: jdbc:mysql://localhost:3307/meeting_booking?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+booking:
+  jwt:
+    secret: ${JWT_SECRET:dev-secret-please-change}
+    expire-hours: 2
 
 springdoc:
   swagger-ui:
