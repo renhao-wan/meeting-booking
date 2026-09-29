@@ -1,0 +1,10 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: meeting-booking
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
