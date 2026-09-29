@@ -33,6 +33,14 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
+    /** 服务级凭证：MCP 网关泛化转发时携带（X-Service-Key），以系统账号（userId=1）身份执行 */
+    @org.springframework.beans.factory.annotation.Value("${booking.service-key:booking-service-key}")
+    private String serviceKey;
+
+    public static final String SERVICE_KEY_HEADER = "X-Service-Key";
+    public static final long SYSTEM_USER_ID = 1L;
+    public static final String SYSTEM_USERNAME = "service";
+
     /** 免鉴权路径前缀。 */
     private static final List<String> WHITELIST_PREFIXES = List.of(
             "/v3/api-docs",
@@ -58,6 +66,15 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
         if (isWhitelisted(path)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 服务级凭证：网关代业务系统调用（如 Agent 工具执行）以系统账号身份放行
+        String serviceHeaderValue = request.getHeader(SERVICE_KEY_HEADER);
+        if (serviceKey != null && !serviceKey.isBlank() && serviceKey.equals(serviceHeaderValue)) {
+            request.setAttribute(ATTR_USER_ID, SYSTEM_USER_ID);
+            request.setAttribute(ATTR_USERNAME, SYSTEM_USERNAME);
             filterChain.doFilter(request, response);
             return;
         }
