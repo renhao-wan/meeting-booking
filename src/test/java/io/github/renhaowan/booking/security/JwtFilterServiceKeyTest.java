@@ -17,6 +17,11 @@ class JwtFilterServiceKeyTest {
     private final JwtService jwtService = Mockito.mock(JwtService.class);
     private final JwtFilter filter = new JwtFilter(jwtService);
 
+    public JwtFilterServiceKeyTest() {
+        // 手工构造的过滤器不会走 @Value 注入，测试里显式设置
+        org.springframework.test.util.ReflectionTestUtils.setField(filter, "serviceKey", "booking-service-key");
+    }
+
     private record Outcome(int status, Object userId) {
     }
 
