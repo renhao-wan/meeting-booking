@@ -40,14 +40,28 @@ public class BookingController {
     public ApiResponse<BookingResponse> create(
             @RequestAttribute(JwtFilter.ATTR_USER_ID) Long userId,
             @RequestBody @Valid CreateBookingRequest request) {
+        // 组装时间与语义幂等键：幂等键 = SHA-256(userId|roomId|date|start|end|title)，
+        // 同一用户对同一时段同一主题的重复提交天然幂等，调用方（含大模型）无需自行生成
+        java.time.LocalDateTime start = java.time.LocalDate.parse(request.date())
+                .atTime(java.time.LocalTime.parse(request.startTime()));
+        java.time.LocalDateTime end = java.time.LocalDate.parse(request.date())
+                .atTime(java.time.LocalTime.parse(request.endTime()));
+        String idempotentKey = idempotentKey(userId, request.roomId(), request.date(),
+                request.startTime(), request.endTime(), request.title());
         BookingResponse response = BookingResponse.from(bookingService.create(
-                userId,
-                request.roomId(),
-                request.title(),
-                request.startTime(),
-                request.endTime(),
-                request.idempotentKey()));
+                userId, request.roomId(), request.title(), start, end, idempotentKey));
         return ApiResponse.ok(response);
+    }
+
+    private String idempotentKey(Long userId, Long roomId, String date, String start, String end, String title) {
+        String material = userId + "|" + roomId + "|" + date + "|" + start + "|" + end + "|" + title;
+        try {
+            byte[] digest = java.security.MessageDigest.getInstance("SHA-256")
+                    .digest(material.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            return java.util.HexFormat.of().formatHex(digest).substring(0, 32);
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Operation(summary = "取消指定预订")
