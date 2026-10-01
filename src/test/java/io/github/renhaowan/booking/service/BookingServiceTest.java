@@ -8,6 +8,7 @@ import io.github.renhaowan.booking.dao.RoomMapper;
 import io.github.renhaowan.booking.domain.Booking;
 import io.github.renhaowan.booking.domain.BookingStatus;
 import io.github.renhaowan.booking.domain.Room;
+import io.github.renhaowan.booking.service.impl.BookingServiceImpl;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +54,7 @@ class BookingServiceTest {
     void setUp() {
         // LambdaQueryWrapper 解析 Booking::getXxx 依赖 MP 表信息缓存，单测环境手动初始化
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Booking.class);
-        bookingService = new BookingService(bookingMapper, roomMapper);
+        bookingService = new BookingServiceImpl(bookingMapper, roomMapper);
     }
 
     private Room room() {
