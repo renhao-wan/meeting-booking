@@ -1,7 +1,6 @@
 package io.github.renhaowan.booking.common;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -9,10 +8,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 /**
  * 全局异常处理：业务异常返回对应 code，参数校验失败返回 400，未预期异常返回 500。
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BusinessException.class)
     public ApiResponse<Object> handleBusiness(BusinessException e) {

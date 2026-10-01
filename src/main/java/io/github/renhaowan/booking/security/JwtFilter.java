@@ -7,8 +7,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -22,14 +22,14 @@ import java.util.List;
  * JWT 鉴权过滤器：拦截 /api/v1/**，放行登录与文档端点；
  * 校验 Bearer JWT 后将 userId 注入 request attribute。
  */
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     public static final String ATTR_USER_ID = "userId";
 
     public static final String ATTR_USERNAME = "username";
-
-    private static final Logger log = LoggerFactory.getLogger(JwtFilter.class);
 
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -55,10 +55,6 @@ public class JwtFilter extends OncePerRequestFilter {
     );
 
     private final JwtService jwtService;
-
-    public JwtFilter(JwtService jwtService) {
-        this.jwtService = jwtService;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

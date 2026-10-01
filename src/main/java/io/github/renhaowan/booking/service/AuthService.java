@@ -6,8 +6,8 @@ import io.github.renhaowan.booking.common.ErrorCode;
 import io.github.renhaowan.booking.dao.UserMapper;
 import io.github.renhaowan.booking.domain.User;
 import io.github.renhaowan.booking.dto.LoginResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -19,19 +19,14 @@ import java.util.Objects;
 /**
  * 认证服务：用户名密码校验（SHA-256 摘要比对）并签发 JWT。
  */
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthService {
-
-    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final UserMapper userMapper;
 
     private final JwtService jwtService;
-
-    public AuthService(UserMapper userMapper, JwtService jwtService) {
-        this.userMapper = userMapper;
-        this.jwtService = jwtService;
-    }
 
     /**
      * 登录：校验用户名与 SHA-256 口令摘要，成功签发 JWT（subject=用户名，2 小时过期）。

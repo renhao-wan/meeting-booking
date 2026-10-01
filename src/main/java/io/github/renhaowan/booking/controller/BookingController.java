@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,13 +28,10 @@ import java.util.List;
 @SecurityRequirement(name = "bearer-jwt")
 @RestController
 @RequestMapping("/api/v1/bookings")
+@RequiredArgsConstructor
 public class BookingController {
 
     private final BookingService bookingService;
-
-    public BookingController(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
 
     @Operation(summary = "创建会议室预订")
     @PostMapping

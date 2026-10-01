@@ -8,8 +8,8 @@ import io.github.renhaowan.booking.dao.RoomMapper;
 import io.github.renhaowan.booking.domain.Booking;
 import io.github.renhaowan.booking.domain.BookingStatus;
 import io.github.renhaowan.booking.domain.Room;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,19 +24,14 @@ import java.util.stream.Collectors;
  *
  * <p>重叠条件与预订侧保持一致：existing.start &lt; :end AND existing.end &gt; :start（半开区间）。</p>
  */
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class RoomService {
-
-    private static final Logger log = LoggerFactory.getLogger(RoomService.class);
 
     private final RoomMapper roomMapper;
 
     private final BookingMapper bookingMapper;
-
-    public RoomService(RoomMapper roomMapper, BookingMapper bookingMapper) {
-        this.roomMapper = roomMapper;
-        this.bookingMapper = bookingMapper;
-    }
 
     /**
      * 检索可用会议室（status=1），可按容量下限与投影仪过滤；

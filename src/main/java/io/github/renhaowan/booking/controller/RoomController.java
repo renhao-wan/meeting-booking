@@ -6,6 +6,7 @@ import io.github.renhaowan.booking.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,13 +23,10 @@ import java.util.List;
 @Tag(name = "会议室", description = "可用会议室检索")
 @RestController
 @RequestMapping("/api/v1/rooms")
+@RequiredArgsConstructor
 public class RoomController {
 
     private final RoomService roomService;
-
-    public RoomController(RoomService roomService) {
-        this.roomService = roomService;
-    }
 
     @Operation(summary = "查询可用会议室",
             description = "返回 status=1 的会议室，可按容量下限与投影仪过滤；"

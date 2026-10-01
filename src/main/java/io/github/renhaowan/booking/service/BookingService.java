@@ -8,8 +8,8 @@ import io.github.renhaowan.booking.dao.RoomMapper;
 import io.github.renhaowan.booking.domain.Booking;
 import io.github.renhaowan.booking.domain.BookingStatus;
 import io.github.renhaowan.booking.domain.Room;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -22,10 +22,10 @@ import java.util.Objects;
 /**
  * 预订服务：创建（幂等 + 冲突校验 + 乐观锁写入重试）与取消（状态机 + 仅本人 + 乐观锁更新）。
  */
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class BookingService {
-
-    private static final Logger log = LoggerFactory.getLogger(BookingService.class);
 
     /** 写入最大尝试次数：首次 + 重试 1 次。 */
     static final int MAX_WRITE_ATTEMPTS = 2;
@@ -33,11 +33,6 @@ public class BookingService {
     private final BookingMapper bookingMapper;
 
     private final RoomMapper roomMapper;
-
-    public BookingService(BookingMapper bookingMapper, RoomMapper roomMapper) {
-        this.bookingMapper = bookingMapper;
-        this.roomMapper = roomMapper;
-    }
 
     /**
      * 创建预订，事务内执行：
