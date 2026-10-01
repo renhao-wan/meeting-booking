@@ -28,6 +28,9 @@ public class JwtService {
 
     private static final String HMAC_ALGORITHM = "HmacSHA256";
 
+    /** 密钥派生摘要算法：将任意长度口令摘要为 32 字节以满足 HS256 密钥长度要求。 */
+    private static final String SHA256_ALGORITHM = "SHA-256";
+
     private final SecretKey secretKey;
 
     private final long expireHours;
@@ -74,7 +77,7 @@ public class JwtService {
 
     private static SecretKey deriveKey(String secret) {
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest digest = MessageDigest.getInstance(SHA256_ALGORITHM);
             byte[] keyBytes = digest.digest(secret.getBytes(StandardCharsets.UTF_8));
             return new SecretKeySpec(keyBytes, HMAC_ALGORITHM);
         } catch (NoSuchAlgorithmException e) {

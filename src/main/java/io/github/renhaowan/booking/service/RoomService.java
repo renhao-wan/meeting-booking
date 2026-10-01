@@ -3,6 +3,7 @@ package io.github.renhaowan.booking.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.github.renhaowan.booking.common.BusinessException;
 import io.github.renhaowan.booking.common.ErrorCode;
+import io.github.renhaowan.booking.common.Messages;
 import io.github.renhaowan.booking.dao.BookingMapper;
 import io.github.renhaowan.booking.dao.RoomMapper;
 import io.github.renhaowan.booking.domain.Booking;
@@ -47,10 +48,10 @@ public class RoomService {
                                       Integer minCapacity, Boolean projector) {
         boolean hasWindow = startTime != null || endTime != null;
         if (hasWindow && (startTime == null || endTime == null)) {
-            throw new BusinessException(ErrorCode.INVALID_PARAM, "startTime 与 endTime 必须同时提供");
+            throw new BusinessException(ErrorCode.INVALID_PARAM, Messages.WINDOW_TIME_PAIR_REQUIRED);
         }
         if (hasWindow && !startTime.isBefore(endTime)) {
-            throw new BusinessException(ErrorCode.INVALID_PARAM, "开始时间必须早于结束时间");
+            throw new BusinessException(ErrorCode.INVALID_PARAM, Messages.TIME_ORDER_INVALID);
         }
 
         LambdaQueryWrapper<Room> query = new LambdaQueryWrapper<>();

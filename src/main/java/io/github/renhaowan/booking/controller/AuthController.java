@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 认证接口。
+ * 认证接口：POST /api/v1/auth/login 校验用户名密码并签发 2 小时有效的 JWT，
+ * 后续请求以 {@code Authorization: Bearer <token>} 携带。
  */
 @Tag(name = "认证", description = "用户登录与令牌签发")
 @RestController

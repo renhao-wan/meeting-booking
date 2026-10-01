@@ -16,6 +16,9 @@ public class Room {
     /** 会议室状态：可用。 */
     public static final int STATUS_AVAILABLE = 1;
 
+    /** 会议室状态：停用。 */
+    public static final int STATUS_DISABLED = 0;
+
     /** 主键，数据库自增。 */
     @TableId(type = IdType.AUTO)
     private Long id;

@@ -3,6 +3,7 @@ package io.github.renhaowan.booking.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.github.renhaowan.booking.common.BusinessException;
 import io.github.renhaowan.booking.common.ErrorCode;
+import io.github.renhaowan.booking.common.Messages;
 import io.github.renhaowan.booking.dao.UserMapper;
 import io.github.renhaowan.booking.domain.User;
 import io.github.renhaowan.booking.dto.LoginResponse;
@@ -24,6 +25,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AuthService {
 
+    /** 口令摘要算法。 */
+    private static final String SHA256_ALGORITHM = "SHA-256";
+
     private final UserMapper userMapper;
 
     private final JwtService jwtService;
@@ -38,7 +42,7 @@ public class AuthService {
                 new LambdaQueryWrapper<User>().eq(User::getUsername, username));
         if (user == null || !Objects.equals(user.getPasswordHash(), sha256Hex(password))) {
             log.info("登录失败：username={}", username);
-            throw new BusinessException(ErrorCode.AUTH_FAILED, "用户名或密码错误");
+            throw new BusinessException(ErrorCode.AUTH_FAILED, Messages.AUTH_FAILED);
         }
         String token = jwtService.generateToken(user.getUsername(), user.getId());
         log.info("登录成功：username={}", username);
@@ -47,7 +51,7 @@ public class AuthService {
 
     static String sha256Hex(String raw) {
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest digest = MessageDigest.getInstance(SHA256_ALGORITHM);
             return HexFormat.of().formatHex(digest.digest(raw.getBytes(StandardCharsets.UTF_8)));
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 不可用", e);

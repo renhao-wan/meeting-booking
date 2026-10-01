@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * 全局异常处理：业务异常返回对应 code，参数校验失败返回 400，未预期异常返回 500。
+ *
+ * <p>所有响应统一为 {@link ApiResponse} 结构，未预期异常的堆栈与细节仅记日志，
+ * 对外只返回固定文案，避免内部信息泄露。</p>
  */
 @Slf4j
 @RestControllerAdvice
@@ -23,7 +26,7 @@ public class GlobalExceptionHandler {
         String detail = e.getBindingResult().getFieldErrors().stream()
                 .findFirst()
                 .map(err -> err.getField() + " " + err.getDefaultMessage())
-                .orElse("参数校验失败");
+                .orElse(Messages.PARAM_VALIDATION_FAILED);
         log.warn("参数校验失败: {}", detail);
         return ApiResponse.error(ErrorCode.INVALID_PARAM, detail);
     }
@@ -33,12 +36,12 @@ public class GlobalExceptionHandler {
         // 请求体不可读（典型：时间/日期格式不符合契约）——返回明确 400，让调用方（含大模型）可自纠正
         String detail = e.getMostSpecificCause().getMessage();
         log.warn("请求体不可读: {}", detail);
-        return ApiResponse.error(ErrorCode.INVALID_PARAM, "请求体格式错误：" + detail);
+        return ApiResponse.error(ErrorCode.INVALID_PARAM, String.format(Messages.BODY_UNREADABLE, detail));
     }
 
     @ExceptionHandler(Exception.class)
     public ApiResponse<Object> handleUnexpected(Exception e) {
         log.error("未预期异常", e);
-        return ApiResponse.error(ErrorCode.INTERNAL_ERROR, "服务内部异常");
+        return ApiResponse.error(ErrorCode.INTERNAL_ERROR, Messages.INTERNAL_ERROR);
     }
 }

@@ -15,6 +15,12 @@ import java.time.LocalDateTime;
 @TableName("`user`")
 public class User {
 
+    /** 角色：系统管理员。 */
+    public static final String ROLE_ADMIN = "ADMIN";
+
+    /** 角色：普通用户。 */
+    public static final String ROLE_USER = "USER";
+
     /** 主键，数据库自增。 */
     @TableId(type = IdType.AUTO)
     private Long id;

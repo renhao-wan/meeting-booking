@@ -1,6 +1,7 @@
 package io.github.renhaowan.booking.security;
 
 import io.github.renhaowan.booking.common.ErrorCode;
+import io.github.renhaowan.booking.common.Messages;
 import io.github.renhaowan.booking.service.JwtService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -77,7 +78,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (header == null || !header.startsWith(BEARER_PREFIX)) {
-            unauthorized(response, "缺少 Bearer 访问令牌");
+            unauthorized(response, Messages.MISSING_BEARER_TOKEN);
             return;
         }
         String token = header.substring(BEARER_PREFIX.length()).trim();
@@ -85,7 +86,7 @@ public class JwtFilter extends OncePerRequestFilter {
             Long userId = jwtService.parseUserId(token);
             String username = jwtService.parseUsername(token);
             if (userId == null || username == null) {
-                unauthorized(response, "访问令牌缺少用户信息");
+                unauthorized(response, Messages.TOKEN_MISSING_IDENTITY);
                 return;
             }
             request.setAttribute(ATTR_USER_ID, userId);
@@ -93,7 +94,7 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (JwtException | IllegalArgumentException e) {
             log.debug("JWT 校验失败: {}", e.getMessage());
-            unauthorized(response, "访问令牌无效或已过期");
+            unauthorized(response, Messages.TOKEN_INVALID);
         }
     }
 

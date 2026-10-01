@@ -18,7 +18,8 @@ import java.time.LocalTime;
 import java.util.List;
 
 /**
- * 会议室接口。
+ * 会议室接口：GET /api/v1/rooms 检索可用会议室，
+ * 支持容量下限、投影仪过滤，以及按时间窗口排除已被预订（BOOKED）的会议室。
  */
 @Tag(name = "会议室", description = "可用会议室检索")
 @RestController
