@@ -22,6 +22,9 @@ booking:
   jwt:
     secret: ${JWT_SECRET:dev-secret-please-change}
     expire-hours: 2
+  # 服务级凭证（X-Service-Key）：供上游 MCP 网关以系统账号转发调用；
+  # 生产环境必须通过环境变量 BOOKING_SERVICE_KEY 注入强随机值
+  service-key: ${BOOKING_SERVICE_KEY:booking-service-key}
 
 springdoc:
   swagger-ui:

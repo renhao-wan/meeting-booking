@@ -34,7 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
-    /** 服务级凭证：MCP 网关泛化转发时携带（X-Service-Key），以系统账号（userId=1）身份执行 */
+    /** 服务级凭证配置项：booking.service-key，生产环境应通过环境变量注入强随机值。 */
     @org.springframework.beans.factory.annotation.Value("${booking.service-key:booking-service-key}")
     private String serviceKey;
 
@@ -67,7 +67,12 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 服务级凭证：网关代业务系统调用（如 Agent 工具执行）以系统账号身份放行
+        // 服务级凭证分支：X-Service-Key 是给上游 MCP 网关转发用的系统级凭证，与用户 JWT 并行的另一条鉴权通道。
+        // 适用场景：网关代业务系统（或 Agent 工具执行）调用本服务时不宜持有任何真实用户的 JWT，
+        // 携带匹配的 X-Service-Key 即以系统账号（userId=1，username=service）身份放行，
+        // 请求 attribute 注入方式与 JWT 分支一致，下游代码无感知。
+        // 安全要求：生产环境必须将 booking.service-key（对应环境变量 BOOKING_SERVICE_KEY）
+        // 改为强随机值并从环境变量注入，禁止沿用代码/配置中的开发默认值。
         String serviceHeaderValue = request.getHeader(SERVICE_KEY_HEADER);
         if (serviceKey != null && !serviceKey.isBlank() && serviceKey.equals(serviceHeaderValue)) {
             request.setAttribute(ATTR_USER_ID, SYSTEM_USER_ID);
