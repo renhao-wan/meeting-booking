@@ -1,5 +1,6 @@
 package io.github.renhaowan.booking.service;
 
+import io.github.renhaowan.booking.service.impl.JwtServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class JwtServiceTest {
 
-    private final JwtService jwtService = new JwtService("unit-test-secret", 2);
+    private final JwtService jwtService = new JwtServiceImpl("unit-test-secret", 2);
 
     @Test
     void generateThenParseRoundTrip() {
@@ -26,7 +27,7 @@ class JwtServiceTest {
     @Test
     void expiredTokenThrows() {
         // expire-hours < 0 保证签发即过期
-        JwtService expiredService = new JwtService("unit-test-secret", -1);
+        JwtService expiredService = new JwtServiceImpl("unit-test-secret", -1);
         String token = expiredService.generateToken("admin", 1L);
 
         assertThrows(ExpiredJwtException.class, () -> expiredService.parseToken(token));

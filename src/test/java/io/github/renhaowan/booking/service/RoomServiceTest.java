@@ -9,6 +9,7 @@ import io.github.renhaowan.booking.dao.RoomMapper;
 import io.github.renhaowan.booking.domain.Booking;
 import io.github.renhaowan.booking.domain.BookingStatus;
 import io.github.renhaowan.booking.domain.Room;
+import io.github.renhaowan.booking.service.impl.RoomServiceImpl;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +61,7 @@ class RoomServiceTest {
         MapperBuilderAssistant assistant = new MapperBuilderAssistant(new MybatisConfiguration(), "");
         TableInfoHelper.initTableInfo(assistant, Room.class);
         TableInfoHelper.initTableInfo(assistant, Booking.class);
-        roomService = new RoomService(roomMapper, bookingMapper);
+        roomService = new RoomServiceImpl(roomMapper, bookingMapper);
     }
 
     private Room room(long id, String name, int capacity, boolean projector) {

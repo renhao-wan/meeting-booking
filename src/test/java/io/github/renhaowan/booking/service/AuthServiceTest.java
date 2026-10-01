@@ -6,6 +6,8 @@ import io.github.renhaowan.booking.common.BusinessException;
 import io.github.renhaowan.booking.dao.UserMapper;
 import io.github.renhaowan.booking.domain.User;
 import io.github.renhaowan.booking.dto.LoginResponse;
+import io.github.renhaowan.booking.service.impl.AuthServiceImpl;
+import io.github.renhaowan.booking.service.impl.JwtServiceImpl;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,13 +33,13 @@ class AuthServiceTest {
 
     private AuthService authService;
 
-    private final JwtService jwtService = new JwtService("unit-test-secret", 2);
+    private final JwtService jwtService = new JwtServiceImpl("unit-test-secret", 2);
 
     @BeforeEach
     void setUp() {
         // LambdaQueryWrapper 解析 User::getUsername 依赖 MP 表信息缓存，单测环境手动初始化
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), User.class);
-        authService = new AuthService(userMapper, jwtService);
+        authService = new AuthServiceImpl(userMapper, jwtService);
     }
 
     private User admin() {
@@ -45,7 +47,7 @@ class AuthServiceTest {
         user.setId(1L);
         user.setUsername("admin");
         // SHA-256("admin123")
-        user.setPasswordHash(AuthService.sha256Hex("admin123"));
+        user.setPasswordHash(AuthServiceImpl.sha256Hex("admin123"));
         user.setRole("ADMIN");
         return user;
     }
